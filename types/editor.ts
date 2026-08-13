@@ -1,0 +1,66 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export type ShapeKind =
+  | "rect"
+  | "circle"
+  | "line"
+  | "triangle"
+  | "polygon";
+
+export type ToolId =
+  | "move"
+  | "select"
+  | "marquee"
+  | "lasso"
+  | "polygonalLasso"
+  | "magneticLasso"
+  | "wand"
+  | "brush"
+  | "pencil"
+  | "eraser"
+  | "heal"
+  | "clone"
+  | "spotHeal"
+  | "text"
+  | "vText"
+  | "shape"
+  | "pen"
+  | "bucket"
+  | "gradient"
+  | "crop"
+  | "zoom"
+  | "hand"
+  | "color"
+  | "dodge"
+  | "burn"
+  | "sponge"
+  | "smudge"
+  | "sharpen"
+  | "blur"
+  | "brightness"
+  | "quickMask"
+  | "measure"
+  | "slice"
+  | "frame"
+  | "liquify"
+  | "textOnPath"
+  | "magicEraser"
+  | "backgroundEraser"
+  | "colorReplacement"
+  | "historyBrush"
+  | "artHistoryBrush"
+  | "mixerBrush"
+  | "patternStamp"
+  | "patch"
+  | "redEye"
+  | "quickSelection"
+  | "refineEdge"
+  | "objectSelection"
+  | "rotateView"
+  | "notes"
+  | "count";
+
+export interface ToolCtx {
+  canvas: any;
+  get: (key: string) => any;
+  push: () => void;
+}

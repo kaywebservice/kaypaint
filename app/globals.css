@@ -1,0 +1,300 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gray-50: #f4f6f9;
+  --color-gray-100: #e7eaf1;
+  --color-gray-200: #ccd3e0;
+  --color-gray-300: #aab3c6;
+  --color-gray-400: #7f8aa3;
+  --color-gray-500: #5d6779;
+  --color-gray-600: #3b4353;
+  --color-gray-700: #242c3b;
+  --color-gray-800: #1a2130;
+  --color-gray-900: #12161f;
+  --color-gray-950: #0b0e14;
+
+  --color-blue-50: #eef1ff;
+  --color-blue-100: #e0e5ff;
+  --color-blue-200: #c6cdff;
+  --color-blue-300: #a7b1ff;
+  --color-blue-400: #8a95fb;
+  --color-blue-500: #7178f5;
+  --color-blue-600: #6366f1;
+  --color-blue-700: #5248d4;
+  --color-blue-800: #423bab;
+  --color-blue-900: #36308c;
+  --color-blue-950: #211c63;
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(120deg, #8a95fb 0%, #c084fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility accent-gradient {
+  background-image: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+@utility accent-active {
+  background-image: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  box-shadow:
+    0 4px 18px rgba(99, 102, 241, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+:root {
+  --background: #0b0e14;
+  --foreground: #e7eaf1;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom scrollbars */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #3b4353 #10141d;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #10141d;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #3b4353;
+  border-radius: 4px;
+  border: 2px solid #10141d;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #4b5468;
+}
+
+.scrollbar-thin::-webkit-scrollbar-corner {
+  background: #10141d;
+}
+
+/* Photoshop-style selection */
+::selection {
+  background: #6366f1;
+  color: white;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 1px solid #8a95fb;
+  outline-offset: 1px;
+}
+
+/* Canvas wrapper */
+.canvas-wrapper {
+  background: #1a2130;
+}
+
+/* Panel scrollbars */
+.panel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #3b4353 #12161f;
+}
+
+.panel-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.panel-scroll::-webkit-scrollbar-track {
+  background: #12161f;
+}
+
+.panel-scroll::-webkit-scrollbar-thumb {
+  background: #3b4353;
+  border-radius: 3px;
+}
+
+.panel-scroll::-webkit-scrollbar-thumb:hover {
+  background: #4b5468;
+}
+
+/* Text inputs & selects - modern dark fields */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+select,
+textarea {
+  background: #1a2130;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #e7eaf1;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(138, 149, 251, 0.6);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Range sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #2a3245;
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8a95fb, #c084fc);
+  cursor: pointer;
+  border: 2px solid #12161f;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8a95fb, #c084fc);
+  cursor: pointer;
+  border: 2px solid #12161f;
+}
+
+input[type="color"] {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: none;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+}
+
+/* Button hover states */
+button:not(:disabled):hover {
+  transition: background-color 0.1s ease;
+}
+
+/* Tooltip */
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  background: #1a2130;
+  color: #e7eaf1;
+  font-size: 11px;
+  white-space: nowrap;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  margin-bottom: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Disable default tooltip */
+[title] {
+  position: relative;
+}
+
+/* Canvas container */
+#canvas-container {
+  touch-action: none;
+}
+
+/* Dialog/modal backdrop */
+.backdrop {
+  background: rgba(4, 6, 12, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+/* Photoshop-style panel header */
+.panel-header {
+  background: #161c29;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Context menu */
+.context-menu {
+  background: #1a2130;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+}
+
+.context-menu-item {
+  padding: 7px 12px;
+  font-size: 13px;
+  color: #d7dce8;
+  white-space: nowrap;
+  border-radius: 7px;
+  margin: 0 5px;
+}
+
+.context-menu-item:hover {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+}
+
+.context-menu-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin: 5px 0;
+}
+
+/* Splash screen animations */
+@keyframes tipin {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tip-in {
+  animation: tipin 0.45s ease;
+}
+
+@keyframes barflow {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(400%);
+  }
+}

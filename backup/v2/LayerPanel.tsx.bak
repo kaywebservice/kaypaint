@@ -1,0 +1,182 @@
+"use client";
+
+import { useLayerStore } from "@/store/layerStore";
+
+export default function LayerPanel({ canvas }: { canvas: any }) {
+  const {
+    layers,
+    addLayer,
+    removeLayer,
+    toggleVisibility,
+    toggleLock,
+    setActiveLayer,
+    activeLayer,
+  } = useLayerStore();
+
+  const getObject = (layer: any) => {
+    if (!canvas || !layer.objectId) return null;
+
+    return canvas
+      .getObjects()
+      .find(
+        (obj: any) => obj.kaypaintId === layer.objectId
+      );
+  };
+
+  const selectLayer = (layer: any) => {
+    setActiveLayer(layer.id);
+
+    const object = getObject(layer);
+
+    if (!object) return;
+
+    object.set({
+      selectable: true,
+      evented: true,
+    });
+
+    canvas.setActiveObject(object);
+    object.setCoords();
+    canvas.requestRenderAll();
+  };
+
+  const handleVisibility = (
+    e: React.MouseEvent,
+    layer: any
+  ) => {
+    e.stopPropagation();
+
+    const object = getObject(layer);
+
+    if (object) {
+      object.set({
+        visible: !layer.visible,
+      });
+
+      canvas.requestRenderAll();
+    }
+
+    toggleVisibility(layer.id);
+  };
+
+  const handleLock = (
+    e: React.MouseEvent,
+    layer: any
+  ) => {
+    e.stopPropagation();
+
+    const object = getObject(layer);
+
+    if (object) {
+      const locked = !layer.locked;
+
+      object.set({
+        selectable: !locked,
+        evented: !locked,
+        lockMovementX: locked,
+        lockMovementY: locked,
+        lockScalingX: locked,
+        lockScalingY: locked,
+        lockRotation: locked,
+      });
+
+      if (locked && canvas.getActiveObject() === object) {
+        canvas.discardActiveObject();
+      }
+
+      canvas.requestRenderAll();
+    }
+
+    toggleLock(layer.id);
+  };
+
+  const handleDelete = (
+    e: React.MouseEvent,
+    layer: any
+  ) => {
+    e.stopPropagation();
+
+    const object = getObject(layer);
+
+    if (object) {
+      if (canvas.getActiveObject() === object) {
+        canvas.discardActiveObject();
+      }
+
+      canvas.remove(object);
+      canvas.requestRenderAll();
+    }
+
+    removeLayer(layer.id);
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="font-bold text-lg">
+          Layers
+        </h2>
+
+        <button
+          onClick={addLayer}
+          className="bg-blue-600 px-3 py-1 rounded"
+        >
+          +
+        </button>
+      </div>
+
+      <div className="space-y-2">
+        {layers.length === 0 && (
+          <p className="text-gray-400">
+            No Layers
+          </p>
+        )}
+
+        {layers.map((layer) => (
+          <div
+            key={layer.id}
+            onClick={() => selectLayer(layer)}
+            className={`p-2 rounded flex items-center justify-between cursor-pointer select-none ${
+              activeLayer === layer.id
+                ? "bg-blue-600"
+                : "bg-gray-700"
+            }`}
+          >
+            <span className="truncate">
+              {layer.name}
+            </span>
+
+            <div className="flex gap-2 ml-2">
+              <button
+                onClick={(e) =>
+                  handleVisibility(e, layer)
+                }
+                className="hover:bg-gray-600 px-1 rounded"
+              >
+                {layer.visible ? "👁" : "🚫"}
+              </button>
+
+              <button
+                onClick={(e) =>
+                  handleLock(e, layer)
+                }
+                className="hover:bg-gray-600 px-1 rounded"
+              >
+                {layer.locked ? "🔒" : "🔓"}
+              </button>
+
+              <button
+                onClick={(e) =>
+                  handleDelete(e, layer)
+                }
+                className="hover:bg-red-600 px-1 rounded"
+              >
+                ❌
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

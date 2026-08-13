@@ -1,0 +1,38 @@
+{
+  "name": "kaypaint",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "smoke": "node --experimental-strip-types --experimental-transform-types scripts/smoke_test.mjs",
+    "smokeHttp": "node --experimental-strip-types --experimental-transform-types scripts/smoke_test.mjs"
+  },
+  "dependencies": {
+    "@google/genai": "^2.16.0",
+    "clsx": "^2.1.1",
+    "colorjs.io": "^0.7.1",
+    "fabric": "^7.4.0",
+    "firebase": "^12.17.1",
+    "gifenc": "^1.0.3",
+    "lucide-react": "^1.30.0",
+    "next": "16.3.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "tailwind-merge": "^3.6.0",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/fabric": "^5.3.11",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

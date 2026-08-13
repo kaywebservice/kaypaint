@@ -1,0 +1,49 @@
+"use client";
+
+import { useEditorStore } from "@/store/editorStore";
+
+export default function OptionsBar() {
+  const activeTool = useEditorStore(
+    (state) => state.activeTool
+  );
+
+  return (
+    <div className="h-12 bg-gray-800 border-b border-gray-700 flex items-center px-4 gap-6 text-sm">
+
+      <div>
+        Tool:
+        <span className="ml-2 font-bold text-blue-400">
+          {activeTool}
+        </span>
+      </div>
+
+      <div>
+        Size:
+        <input
+          type="number"
+          defaultValue="20"
+          className="ml-2 w-16 bg-gray-900 border border-gray-600 rounded px-2"
+        />
+      </div>
+
+      <div>
+        Opacity:
+        <input
+          type="number"
+          defaultValue="100"
+          className="ml-2 w-16 bg-gray-900 border border-gray-600 rounded px-2"
+        />
+        %
+      </div>
+
+      <div>
+        Color:
+        <input
+          type="color"
+          className="ml-2"
+        />
+      </div>
+
+    </div>
+  );
+}

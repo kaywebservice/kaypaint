@@ -1,0 +1,13 @@
+import type { ToolCtx } from "@/types/editor";
+
+export function activateTool(ctx: ToolCtx) {
+  const { canvas } = ctx;
+  canvas.selection = true;
+  canvas.skipTargetFind = false;
+  canvas.isDrawingMode = false;
+  canvas.requestRenderAll();
+}
+
+export function deactivateTool(ctx: ToolCtx) {
+  ctx.canvas.requestRenderAll();
+}

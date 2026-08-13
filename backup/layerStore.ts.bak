@@ -1,0 +1,125 @@
+import { create } from "zustand";
+import { KayLayer } from "@/types/layer";
+
+
+interface LayerState {
+addCanvasLayer: (
+  name: string,
+  object: string) => void;
+  layers: KayLayer[];
+
+  activeLayer: string | null;
+
+  addLayer: () => void;
+
+addCanvasLayer: (name: string) => void;
+  removeLayer: (id: string) => void;
+
+  setActiveLayer: (id: string) => void;
+
+  toggleVisibility: (id: string) => void;
+
+  toggleLock: (id: string) => void;
+}
+
+export const useLayerStore = create<LayerState>((set) => ({
+  layers: [],
+
+  activeLayer: null,
+
+  addLayer: () =>
+    set((state) => {
+      const newLayer: KayLayer = {
+        id: Date.now().toString(),
+
+        name: "New Layer",
+
+        type: "image",
+
+        visible: true,
+
+        locked: false,
+
+        opacity: 100,
+
+        blendMode: "normal",
+
+        hasMask: false,
+      };
+
+      return {
+        layers: [
+          ...state.layers,
+          newLayer,
+        ],
+
+        activeLayer: newLayer.id,
+      };
+    }),
+addCanvasLayer: (name, objectId) =>
+  set((state) => {
+    const newLayer: KayLayer = {
+      id: Date.now().toString(),
+
+      name,
+
+      type: "image",
+
+      visible: true,
+
+      locked: false,
+
+      opacity: 100,
+
+      blendMode: "normal",
+
+      hasMask: false,
+
+      objectId,
+    };
+
+    return {
+      layers: [
+        ...state.layers,
+        newLayer,
+      ],
+
+      activeLayer: newLayer.id,
+    };
+  }),
+  removeLayer: (id) =>
+    set((state) => ({
+      layers: state.layers.filter(
+        (layer) => layer.id !== id
+      ),
+    })),
+
+  setActiveLayer: (id) =>
+    set({
+      activeLayer: id,
+    }),
+
+  toggleVisibility: (id) =>
+    set((state) => ({
+      layers: state.layers.map((layer) =>
+        layer.id === id
+          ? {
+              ...layer,
+              visible: !layer.visible,
+            }
+          : layer
+      ),
+    })),
+
+  toggleLock: (id) =>
+    set((state) => ({
+      layers: state.layers.map((layer) =>
+        layer.id === id
+          ? {
+              ...layer,
+              locked: !layer.locked,
+            }
+          : layer
+      ),
+    })),
+}));

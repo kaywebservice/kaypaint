@@ -1,0 +1,122 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { util } from "fabric";
+import type { ToolCtx } from "@/types/editor";
+import { getPointer } from "@/engine/canvasEngine";
+
+function toLocal(obj: any, pt: { x: number; y: number }) {
+  const inv = util.invertTransform(obj.calcTransformMatrix());
+  const lp = util.transformPoint(pt, inv);
+  return { x: lp.x, y: lp.y };
+}
+
+function fixEye(
+  data: Uint8ClampedArray,
+  w: number,
+  h: number,
+  cx: number,
+  cy: number,
+  r: number
+) {
+  const r2 = r * r;
+  const x0 = Math.max(0, Math.floor(cx - r));
+  const y0 = Math.max(0, Math.floor(cy - r));
+  const x1 = Math.min(w - 1, Math.ceil(cx + r));
+  const y1 = Math.min(h - 1, Math.ceil(cy + r));
+  for (let y = y0; y <= y1; y++) {
+    for (let x = x0; x <= x1; x++) {
+      const dx = x - cx;
+      const dy = y - cy;
+      if (dx * dx + dy * dy > r2) continue;
+      const i = (y * w + x) * 4;
+      const R = data[i];
+      const G = data[i + 1];
+      const B = data[i + 2];
+      if (data[i + 3] === 0) continue;
+      if (R > 1.6 * G && R > 1.6 * B && R > 60) {
+        const gray = (R + G + B) / 3;
+        data[i] = Math.min(255, gray * 0.85);
+        data[i + 1] = Math.min(255, gray * 0.95);
+        data[i + 2] = Math.min(255, gray * 1.05);
+      }
+    }
+  }
+}
+
+function commit(ctx: ToolCtx, obj: any, work: HTMLCanvasElement) {
+  const canvas = ctx.canvas;
+  const prev = {
+    left: obj.left,
+    top: obj.top,
+    scaleX: obj.scaleX,
+    scaleY: obj.scaleY,
+    angle: obj.angle,
+    opacity: obj.opacity,
+    visible: obj.visible,
+    id: obj.kaypaintId,
+    styles: obj.layerStyleJson,
+  };
+  const img = new Image();
+  img.onload = () => {
+    obj.setElement(img);
+    obj.set({
+      left: prev.left,
+      top: prev.top,
+      scaleX: prev.scaleX,
+      scaleY: prev.scaleY,
+      angle: prev.angle,
+      opacity: prev.opacity,
+      visible: prev.visible,
+    });
+    if (prev.styles !== undefined) obj.set("layerStyleJson", prev.styles);
+    if (prev.id !== undefined) obj.set("kaypaintId", prev.id);
+    obj.setCoords();
+    canvas.requestRenderAll();
+    ctx.push();
+  };
+  img.src = work.toDataURL("image/png");
+}
+
+export function activateTool(ctx: ToolCtx) {
+  const { canvas } = ctx;
+  canvas.isDrawingMode = false;
+  canvas.selection = false;
+
+  const down = (e: any) => {
+    if (e.e.button !== 0) return;
+    const obj = canvas.getActiveObject?.();
+    if (!obj || obj.type !== "image") {
+      window.alert("Select an image layer first.");
+      return;
+    }
+    const el = obj.getElement?.();
+    if (!el) return;
+    const w = el.naturalWidth || el.width;
+    const h = el.naturalHeight || el.height;
+    if (!w || !h) return;
+    const work = document.createElement("canvas");
+    work.width = w;
+    work.height = h;
+    const g = work.getContext("2d")!;
+    g.drawImage(el, 0, 0, w, h);
+    const img = g.getImageData(0, 0, w, h);
+    const lp = toLocal(obj, getPointer(canvas, e.e));
+    const r = Math.max(8, Number(ctx.get("size") ?? 30) / Math.abs(obj.scaleX || 1));
+    fixEye(img.data, w, h, lp.x, lp.y, r);
+    g.putImageData(img, 0, 0);
+    try {
+      obj.setElement(work);
+      obj.setCoords();
+    } catch {
+      /* keep previous element */
+    }
+    canvas.requestRenderAll();
+    commit(ctx, obj, work);
+  };
+
+  canvas.on("mouse:down", down);
+
+  return () => {
+    canvas.off("mouse:down", down);
+    canvas.requestRenderAll();
+  };
+}
