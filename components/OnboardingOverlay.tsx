@@ -1,9 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Grid3x3, Keyboard, Command, Puzzle, X } from "lucide-react";
 
 const KEY = "kaypaint:onboarded:v1";
+
+function hasOnboarded() {
+  try {
+    return typeof localStorage !== "undefined" && !!localStorage.getItem(KEY);
+  } catch {
+    return true;
+  }
+}
 
 const TIPS = [
   {
@@ -29,14 +37,17 @@ const TIPS = [
 ];
 
 export default function OnboardingOverlay() {
-  const [show, setShow] = useState(() => {
-    try {
-      if (typeof window === "undefined") return false;
-      return !localStorage.getItem(KEY);
-    } catch {
-      return false;
-    }
-  });
+  const [dismissed, setDismissed] = useState(false);
+
+  // Hydration-safe: the server and first client render both use the server
+  // snapshot (hidden), then the client reveals the overlay after mount.
+  const shouldShow = useSyncExternalStore(
+    () => () => {},
+    () => !hasOnboarded(),
+    () => false
+  );
+
+  const show = shouldShow && !dismissed;
 
   const dismiss = () => {
     try {
@@ -44,7 +55,7 @@ export default function OnboardingOverlay() {
     } catch {
       /* ignore */
     }
-    setShow(false);
+    setDismissed(true);
   };
 
   if (!show) return null;

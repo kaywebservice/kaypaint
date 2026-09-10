@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { showOptions } from "@/components/Menu/OptionDialog";
 import { importImageFile } from "@/components/Tools/ImageTool";
 import { importCanvasJSON } from "@/engine/exportEngine";
 import { compositeCanvas } from "@/engine/pixelOps";
 import { openPSDFile } from "@/engine/psdEngine";
+import { importPDF } from "@/engine/pdfImport";
+import { notify } from "@/utils/notify";
 import { useDocStore } from "@/store/documentStore";
 import { useEditorStore } from "@/store/editorStore";
 import { useLayerStore } from "@/store/layerStore";
@@ -49,6 +52,82 @@ export function openPsdPicker() {
     input.remove();
   };
   input.click();
+}
+
+const RAW_EXTS = new Set([".raw", ".nef", ".cr2", ".arw", ".dng", ".raf", ".orf", ".rw2", ".cr3", ".k25", ".mrw"]);
+const IMAGE_EXTS = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".avif", ".svg", ".heic", ".heif", ".ico", ".jfif", ".apng"]);
+
+/**
+ * Photoshop-style Open: a single file dialog that accepts any file and routes
+ * it to the right importer (PDF, PSD, project JSON, images, …).
+ */
+export function openAnyFilePicker() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ""; // any file
+  input.style.display = "none";
+  if (!document.body) return;
+  document.body.appendChild(input);
+  input.onchange = () => {
+    const file = input.files?.[0];
+    input.remove();
+    if (file) void openAnyFile(file, canvasNow());
+  };
+  input.click();
+}
+
+export async function openAnyFile(file: File, canvas: any) {
+  const lower = file.name.toLowerCase();
+  const ext = lower.slice(lower.lastIndexOf("."));
+  const mime = file.type || "";
+
+  if (ext === ".psd" || ext === ".psb") {
+    try {
+      await openPSDFile(file, canvas);
+    } catch (e: any) {
+      notify(`Could not open PSD: ${e?.message ?? e}`, "warning");
+    }
+    return;
+  }
+  if (ext === ".json") {
+    try {
+      await importCanvasJSON(canvas, JSON.parse(await file.text()));
+    } catch (e: any) {
+      notify(`Could not open project: ${e?.message ?? e}`, "warning");
+    }
+    return;
+  }
+  if (ext === ".pdf") {
+    try {
+      const n = await importPDF(file, canvas);
+      notify(`PDF opened (${n} page${n === 1 ? "" : "s"})`, "success");
+    } catch (e: any) {
+      notify(`Could not open PDF: ${e?.message ?? e}`, "warning");
+    }
+    return;
+  }
+  if (mime.startsWith("image/") || IMAGE_EXTS.has(ext)) {
+    try {
+      await importImageFile(file, getCtx());
+    } catch (e: any) {
+      notify(`Could not open image: ${e?.message ?? e}`, "warning");
+    }
+    return;
+  }
+  if (ext === ".tif" || ext === ".tiff") {
+    notify("TIFF import isn't supported in browsers yet.", "warning");
+    return;
+  }
+  if (RAW_EXTS.has(ext)) {
+    notify("Camera RAW files aren't supported in Open yet.", "warning");
+    return;
+  }
+  // Last resort: try to treat it as an image.
+  try {
+    await importImageFile(file, getCtx());
+  } catch {
+    notify(`Couldn't open “${file.name}” — unsupported file type.`, "warning");
+  }
 }
 
 interface CanvasLike {

@@ -51,7 +51,7 @@ export default function EditorPage() {
 
       <section className="flex flex-1 min-h-0 overflow-hidden">
         {/* Left Toolbar */}
-        <aside className="w-14 border-r border-gray-700 flex flex-col overflow-hidden">
+        <aside className="w-44 border-r border-gray-700 flex flex-col overflow-hidden">
           <div className="p-2 border-b border-gray-700 bg-gray-950 flex items-center justify-center">
             <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Tools</span>
           </div>

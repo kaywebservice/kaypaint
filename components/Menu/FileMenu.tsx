@@ -17,6 +17,7 @@ import {
   clearRecentFiles,
   closeDocument,
   fileInfo,
+  openAnyFilePicker,
   openImagePicker,
   openProjectPicker,
   openPsdPicker,
@@ -81,8 +82,12 @@ export default function FileMenu() {
     },
     {
       id: "file.open",
-      label: "Open Image…",
+      label: "Open…",
       shortcut: "Ctrl+O",
+      onClick: openAnyFilePicker,
+    },
+    {
+      label: "Open Image…",
       onClick: openImagePicker,
     },
     { label: "Open PSD…", onClick: openPsdPicker },

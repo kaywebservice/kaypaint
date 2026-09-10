@@ -165,7 +165,7 @@ export default function Toolbar() {
         const multi = visibleTools.length > 1;
 
         return (
-          <div key={group.label} className="relative w-full flex justify-center">
+          <div key={group.label} className="relative w-full">
             <button
               onClick={(e) => {
                 if (multi) {
@@ -177,7 +177,7 @@ export default function Toolbar() {
               }}
               title={`${toolById(shownId)?.name ?? shownId}${multi ? ` (${group.label})` : ""} · ${getBinding(shownId) || ""}`}
               className={
-                "relative w-10 h-9 rounded-lg flex items-center justify-center border transition-all duration-150 " +
+                "relative w-full h-9 px-2 rounded-lg flex items-center gap-2 border transition-all duration-150 " +
                 (active
                   ? "accent-active text-white border-transparent"
                   : "bg-gray-800 text-gray-300 border-transparent hover:bg-gray-700 hover:text-white hover:border-white/5")
@@ -186,11 +186,12 @@ export default function Toolbar() {
               {active && (
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 rounded-full bg-gradient-to-b from-indigo-300 to-fuchsia-400 shadow-[0_0_8px_rgba(139,92,246,0.9)]" />
               )}
-              {Icon && <Icon size={18} className={active ? "text-white" : "text-gray-400"} />}
+              {Icon && <Icon size={17} className={active ? "text-white shrink-0" : "text-gray-400 shrink-0"} />}
+              <span className="flex-1 truncate text-left">{toolById(shownId)?.name ?? shownId}</span>
               {multi && (
                 <ChevronDown
-                  size={10}
-                  className={"absolute right-0.5 bottom-0.5 " + (active ? "text-indigo-200" : "text-gray-500")}
+                  size={12}
+                  className={"shrink-0 " + (active ? "text-indigo-200" : "text-gray-500")}
                 />
               )}
             </button>
@@ -211,9 +212,10 @@ export default function Toolbar() {
                   const ctx = getPluginManager().getContext(pluginId);
                   if (ctx) config.onClick(ctx);
                 }}
-                className="w-10 h-9 rounded-lg flex items-center justify-center bg-gray-800 text-indigo-300 border border-transparent hover:bg-gray-700 hover:text-indigo-200 hover:border-white/5"
+                className="w-full h-9 px-2 rounded-lg flex items-center gap-2 bg-gray-800 text-indigo-300 border border-transparent hover:bg-gray-700 hover:text-indigo-200 hover:border-white/5"
               >
-                <Icon size={18} className="text-indigo-400" />
+                <Icon size={17} className="text-indigo-400 shrink-0" />
+                <span className="flex-1 truncate text-left">{config.tooltip}</span>
               </button>
             );
           })}
@@ -227,13 +229,14 @@ export default function Toolbar() {
           title="Edit in Quick Mask Mode (Q)"
           onClick={() => toggleQuickMask()}
           className={
-            "w-10 h-9 rounded-lg flex items-center justify-center border transition-all duration-150 mx-auto " +
+            "w-full h-9 px-2 rounded-lg flex items-center gap-2 border transition-all duration-150 " +
             (activeTool === "quickMask"
               ? "accent-active text-white border-transparent"
               : "bg-gray-800 text-gray-400 border-transparent hover:bg-gray-700 hover:text-white hover:border-white/5")
           }
         >
-          <Eye size={18} className={activeTool === "quickMask" ? "text-white" : ""} />
+          <Eye size={17} className={activeTool === "quickMask" ? "text-white shrink-0" : "shrink-0"} />
+          <span className="flex-1 truncate text-left">Quick Mask</span>
         </button>
       </div>
 
